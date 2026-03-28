@@ -1,5 +1,6 @@
 #include "anim_screen.h"
 #include "raylib.h"
+#include "../utils/color_palette.h"
 #include "../graphics/bresenham.h"
 #include "../graphics/midcircle.h"
 // #include "../graphics/ellipse.h"
@@ -16,7 +17,7 @@ void AnimScreen_Update(void) {
 
 void AnimScreen_Draw(void) {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(COLOR_BASE);
 
     // contoh pake algoritma
     BresenhamLine(100, (int)noteY, 100, (int)noteY + 50, (Color){80, 130, 220, 255});

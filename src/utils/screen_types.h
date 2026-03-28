@@ -1,8 +1,8 @@
 #ifndef SCREEN_TYPE_H
 #define SCREEN_TYPE_H
 
-#define SCREEN_W 1000
-#define SCREEN_H 700
+#define SCREEN_W 1600
+#define SCREEN_H 900
 
 typedef enum {
     SCREEN_MENU,

@@ -1,8 +1,10 @@
 #include "raylib.h"
+#include "utils/color_palette.h"
+
 #include "core/app.h"
 
-#define SCREEN_WIDTH  800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH  1600
+#define SCREEN_HEIGHT 900
 #define FPS 60
 
 int main(void)
@@ -17,7 +19,6 @@ int main(void)
         App_Update();
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
 
         App_Draw();
 
