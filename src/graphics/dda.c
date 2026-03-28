@@ -1,4 +1,4 @@
-#include "src/algo/dda.h"
+#include "dda.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -20,11 +20,11 @@ void DDA_DashedLine(int x1, int y1, int x2, int y2,
     int dx = x2 - x1, dy = y2 - y1;
     int steps = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
     if (steps == 0) { DrawPixel(x1, y1, color); return; }
-    
+
     float xInc = (float)dx / steps;
     float yInc = (float)dy / steps;
     float x = (float)x1, y = (float)y1;
-    
+
     int counter = 0;
     int drawing = 1;
     int current_limit = dashLen;
@@ -34,7 +34,7 @@ void DDA_DashedLine(int x1, int y1, int x2, int y2,
             DrawPixel((int)roundf(x), (int)roundf(y), color);
         }
         x += xInc; y += yInc;
-        
+
         counter++;
         if (counter >= current_limit) {
             counter = 0;
@@ -60,11 +60,11 @@ void DDA_DashDotLine(int x1, int y1, int x2, int y2, Color color) {
     int dx = x2 - x1, dy = y2 - y1;
     int steps = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
     if (steps == 0) { DrawPixel(x1, y1, color); return; }
-    
+
     float xInc = (float)dx / steps;
     float yInc = (float)dy / steps;
     float x = (float)x1, y = (float)y1;
-    
+
     int phases[] = {18, 5, 5, 5};
     int drawPh[] = {1, 0, 1, 0};
     int phase = 0;
@@ -75,7 +75,7 @@ void DDA_DashDotLine(int x1, int y1, int x2, int y2, Color color) {
             DrawPixel((int)roundf(x), (int)roundf(y), color);
         }
         x += xInc; y += yInc;
-        
+
         counter++;
         if (counter >= phases[phase % 4]) {
             counter = 0;

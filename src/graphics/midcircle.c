@@ -1,4 +1,4 @@
-#include "src/algo/midcircle.h"
+#include "midcircle.h"
 
 /*
  * Helper: Plot 8 titik simetri sekaligus (8-way symmetry)
@@ -19,18 +19,18 @@ static void PlotSymmetryPoints(int cx, int cy, int x, int y, Color color) {
 
 /*
  * Midpoint Circle Algorithm (Bresenham-style)
- * 
+ *
  * Algoritma ini menggambar lingkaran menggunakan hanya operasi integer.
- * 
+ *
  * Konsep matematika:
  *   Persamaan lingkaran: x² + y² = r²
  *   Decision parameter d menentukan apakah titik selanjutnya
  *   lebih dekat ke E (x+1, y) atau SE (x+1, y-1)
- * 
+ *
  * Inisialisasi:
  *   x = 0, y = r
  *   d = 3 - 2r  (atau d = 1 - r untuk versi lain)
- * 
+ *
  * Iterasi:
  *   Jika d < 0:  pilih E,  d = d + 4x + 6
  *   Jika d >= 0: pilih SE, d = d + 4(x - y) + 10, y--
@@ -41,14 +41,14 @@ void Midcircle(int centerX, int centerY, int radius, Color color) {
         DrawPixel(centerX, centerY, color);
         return;
     }
-    
+
     int x = 0;
     int y = radius;
     int d = 3 - 2 * radius;  // Decision parameter awal
-    
+
     while (y >= x) {
         PlotSymmetryPoints(centerX, centerY, x, y, color);
-        
+
         if (d < 0) {
             // Pilih titik E (East) - bergerak ke kanan
             d = d + 4 * x + 6;
@@ -63,7 +63,7 @@ void Midcircle(int centerX, int centerY, int radius, Color color) {
 
 /*
  * Midcircle Filled - Lingkaran berisi (solid)
- * 
+ *
  * Menggunakan pendekatan yang sama dengan Midcircle,
  * tetapi menggambar garis horizontal untuk setiap baris y
  * alih-alih hanya titik tunggal.
@@ -73,11 +73,11 @@ void MidcircleFilled(int centerX, int centerY, int radius, Color color) {
         DrawPixel(centerX, centerY, color);
         return;
     }
-    
+
     int x = 0;
     int y = radius;
     int d = 3 - 2 * radius;
-    
+
     while (y >= x) {
         // Gambar garis horizontal untuk mengisi lingkaran
         // Menggunakan DrawPixel untuk setiap titik pada garis
@@ -89,7 +89,7 @@ void MidcircleFilled(int centerX, int centerY, int radius, Color color) {
             DrawPixel(i, centerY + x, color);
             DrawPixel(i, centerY - x, color);
         }
-        
+
         if (d < 0) {
             d = d + 4 * x + 6;
         } else {
@@ -102,7 +102,7 @@ void MidcircleFilled(int centerX, int centerY, int radius, Color color) {
 
 /*
  * Midcircle Thick - Lingkaran dengan ketebalan
- * 
+ *
  * Menggambar beberapa lingkaran konsentris dengan radius
  * yang berbeda untuk menciptakan efek tebal.
  */
@@ -111,12 +111,12 @@ void MidcircleThick(int centerX, int centerY, int radius, int thickness, Color c
         DrawPixel(centerX, centerY, color);
         return;
     }
-    
+
     // Gambar lingkaran dari radius - thickness/2 hingga radius + thickness/2
     int innerR = radius - thickness / 2;
     if (innerR < 0) innerR = 0;
     int outerR = radius + thickness / 2;
-    
+
     for (int r = innerR; r <= outerR; r++) {
         Midcircle(centerX, centerY, r, color);
     }
@@ -124,7 +124,7 @@ void MidcircleThick(int centerX, int centerY, int radius, int thickness, Color c
 
 /*
  * Midcircle Dashed - Lingkaran putus-putus
- * 
+ *
  * Menggunakan counter untuk mengatur pola dash dan gap.
  * Karena lingkaran tidak linear dalam x atau y, kita menggunakan
  * jumlah total titik yang diplot sebagai pengukur.
@@ -134,15 +134,15 @@ void MidcircleDashed(int centerX, int centerY, int radius, int dashLen, int gapL
         DrawPixel(centerX, centerY, color);
         return;
     }
-    
+
     int x = 0;
     int y = radius;
     int d = 3 - 2 * radius;
-    
+
     int counter = 0;
     int drawing = 1;
     int current_limit = dashLen;
-    
+
     while (y >= x) {
         // Plot 8 titik dengan kondisi dash
         if (drawing) {
@@ -155,7 +155,7 @@ void MidcircleDashed(int centerX, int centerY, int radius, int dashLen, int gapL
             DrawPixel(centerX - y, centerY + x, color);
             DrawPixel(centerX - x, centerY + y, color);
         }
-        
+
         // Update dash/gap state
         counter += 8;  // 8 titik per iterasi
         if (counter >= current_limit) {
@@ -163,7 +163,7 @@ void MidcircleDashed(int centerX, int centerY, int radius, int dashLen, int gapL
             drawing = !drawing;
             current_limit = drawing ? dashLen : gapLen;
         }
-        
+
         if (d < 0) {
             d = d + 4 * x + 6;
         } else {

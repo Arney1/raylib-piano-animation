@@ -4,25 +4,14 @@ LIBS   = $(shell pkg-config --libs raylib) -lm -ldl -lpthread
 
 TARGET = grafika_dda
 
-SRCS = main.c \
-       coords.c \
-       src/algo/dda.c \
-       src/algo/bresenham.c \
-       src/algo/midcircle.c \
-       src/ui/primitives.c \
-       src/ui/back_button.c \
-       src/ui/cartesian.c \
-       src/screens/program1.c \
-       src/screens/program2.c \
-       src/screens/program3.c \
-       src/screens/program4.c \
-       src/screens/program5.c \
-       src/screens/program6.c \
-       src/screens/program7.c \
-       src/screens/program8.c \
-       src/screens/program9.c \
-       src/screens/about.c \
-       src/screens/menu.c
+SRCS = src/main.c \
+       src/graphics/dda.c \
+       src/graphics/bresenham.c \
+       src/graphics/midcircle.c \
+       src/screens/anim_screen.c \
+       src/screens/menu_screen.c \
+       src/core/app.c
+
 
 OBJS = $(SRCS:.c=.o)
 

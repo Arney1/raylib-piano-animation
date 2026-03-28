@@ -1,4 +1,4 @@
-#include "coords/coords.h"
+#include "coords.h"
 
 int G_OriginX  = 0;
 int G_OriginY  = 0;
