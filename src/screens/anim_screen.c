@@ -16,13 +16,11 @@ void AnimScreen_Update(void) {
 }
 
 void AnimScreen_Draw(void) {
-    BeginDrawing();
     ClearBackground(COLOR_BASE);
 
     // contoh pake algoritma
-    BresenhamLine(100, (int)noteY, 100, (int)noteY + 50, (Color){80, 130, 220, 255});
-
-    EndDrawing();
+    BresenhamRectangle(100, (int)noteY, 200, (int)noteY + 50, (Color){80, 130, 220, 255});
+    // BresenhamLine(100, (int)noteY, 100, (int)noteY + 50, (Color){80, 130, 220, 255});
 }
 
 void AnimScreen_Unload(void) {
