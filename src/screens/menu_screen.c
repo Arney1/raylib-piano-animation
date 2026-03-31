@@ -15,7 +15,7 @@ void MenuScreen_Init(void) {
 void MenuScreen_Update(Screen *currentScreen) {
     if (IsKeyPressed(KEY_ENTER)) {
         *currentScreen = SCREEN_ANIM;
-        AnimScreen_Init();   // ✅ add this
+        AnimScreen_Init();
     }
     // if (IsKeyPressed(KEY_A)) {
     //     *currentScreen = SCREEN_ABOUT;
@@ -55,10 +55,7 @@ void MenuScreen_Draw(void) {
         if (pattern[i % 7]) {
             int x = i * white_key_width + white_key_width - black_key_width / 2;
             BresenhamRectangle(x, y_start, x + black_key_width, y_start + black_key_height, BLACK);
-            // DrawRectangle(x, y_start, black_key_width, black_key_height, BLACK);
             }
     }
 
-    // // DrawRectangleRounded((Rectangle){0, 0, 160, 36}, 0.3f, 6,
-    // //                          (Color){80, 130, 220, 255});
 }
