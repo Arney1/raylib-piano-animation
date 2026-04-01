@@ -1,6 +1,5 @@
-#include "piano.h"
 #include "../graphics/bresenham.h"
-#include <stdbool.h>
+#include "piano.h"
 
 void piano_init(Piano *p, Vector2 start, Vector2 end) {
   int x_start = start.x, x_end = end.x;
@@ -64,14 +63,14 @@ void piano_draw(Piano *p) {
   }
 }
 
-void piano_activate_white(Piano *p, int i) {
+void piano_set_white(Piano *p, int i, bool state) {
   if (i >= 0 && i < p->white_count)
-    p->white_active[i] = !p->white_active[i];
+    p->white_active[i] = state;
 }
 
-void piano_activate_black(Piano *p, int i) {
+void piano_set_black(Piano *p, int i, bool state) {
   if (i >= 0 && i < p->black_count)
-    p->black_active[i] = !p->black_active[i];
+    p->black_active[i] = state;
 }
 
 void piano_clear(Piano *p) {

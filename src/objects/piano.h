@@ -3,6 +3,7 @@
 
 #include "../utils/screen_types.h"
 #include <raylib.h>
+#include <stdbool.h>
 
 #define MAX_WHITE_KEYS (7*7 + 1)
 #define MAX_BLACK_KEYS (7*5)
@@ -19,8 +20,8 @@ typedef struct {
 
 void piano_init(Piano *p, Vector2 start, Vector2 end);
 void piano_draw(Piano *p);
-void piano_activate_white(Piano *p, int index);
-void piano_activate_black(Piano *p, int index);
+void piano_set_white(Piano *p, int i, bool state);
+void piano_set_black(Piano *p, int i, bool state);
 void piano_clear(Piano *p);
 
 #endif

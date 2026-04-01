@@ -1,12 +1,26 @@
-#ifndef PIANO_H
-#define PIANO_H
+#ifndef NOTE_BLOCK_H
+#define NOTE_BLOCK_H
 
-#include "../utils/screen_types.h"
-#include <raylib.h>
+#include "raylib.h"
+#include <stdbool.h>
 
-void Piano_Init(void);
-void Piano_Update(int *flip, int count);
-void Piano_Draw(Vector2 position_start, Vector2 position_end);
-void Piano_Unload(void);
+#define NOTE_SPEED 2.0f
+
+typedef struct {
+    float x;
+    float y;
+    float width;
+    float height;
+
+    int key_index;     // which piano key it belongs to
+    bool is_black;     // white or black key
+
+    bool active;
+    bool triggered;
+} NoteBlock;
+
+void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index, bool is_black);
+void note_update(NoteBlock *n);
+void note_draw(NoteBlock *n);
 
 #endif
