@@ -12,6 +12,8 @@ SRCS = src/main.c \
        src/screens/menu_screen.c \
        src/objects/piano.c \
        src/objects/note_block.c \
+       src/render/render_state.c \
+       src/utils/draw_utils.c \
        src/core/app.c
 
 

@@ -2,6 +2,7 @@
 #include "../graphics/midcircle.h"
 #include "../objects/note_block.h"
 #include "../objects/piano.h"
+#include "../render/render_state.h"
 #include "../utils/color_palette.h"
 #include "../utils/screen_types.h"
 #include "anim_screen.h"
@@ -41,6 +42,11 @@ void anim_screen_init(void) {
 }
 
 void anim_screen_update(void) {
+
+  if (IsKeyPressed(KEY_O)) {
+    gRenderMode =
+        (gRenderMode == RENDER_FILLED) ? RENDER_OUTLINE : RENDER_FILLED;
+  }
   if (GetRandomValue(0, 65) == 0) {
     spawn_note_random();
   }

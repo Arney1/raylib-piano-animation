@@ -1,3 +1,4 @@
+#include "../utils/draw_utils.h"
 #include "note_block.h"
 
 void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index,
@@ -29,5 +30,5 @@ void note_draw(NoteBlock *n) {
   Color bottom =
       n->is_black ? (Color){60, 60, 200, 255} : (Color){255, 120, 60, 255};
 
-  DrawRectangleGradientV(n->x, n->y, n->width, n->height, top, bottom);
+  DrawRectGradientSmart(n->x, n->y, n->width, n->height, top, bottom);
 }
