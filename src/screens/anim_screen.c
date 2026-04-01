@@ -1,58 +1,34 @@
 #include "anim_screen.h"
-#include "raylib.h"
-#include "../utils/color_palette.h"
 #include "../graphics/bresenham.h"
 #include "../graphics/midcircle.h"
+#include "../objects/piano.h"
+#include "../utils/color_palette.h"
 #include "../utils/screen_types.h"
+#include "raylib.h"
+#include <stdlib.h>
 // #include "../graphics/ellipse.h"
 
 static float noteY = 0;
+static Piano piano;
 
-void AnimScreen_Init(void) {
-    noteY = 0;
+void anim_screen_init(void) {
+  noteY = 0;
+  piano_init(&piano, (Vector2){0, SCREEN_H * 3 / 4},
+             (Vector2){SCREEN_W - 1, SCREEN_H - 1});
 }
 
-void AnimScreen_Update(void) {
-    noteY += 2.0f;
+void anim_screen_update(void) {
+  noteY += 2.0f;
+  piano_activate_white(&piano, rand() % MAX_WHITE_KEYS);
+  piano_activate_black(&piano, rand() % MAX_BLACK_KEYS);
 }
 
-void AnimScreen_Draw(void) {
-    ClearBackground(COLOR_BASE);
+void anim_screen_draw(void) {
 
-    BresenhamRectangle(100, (int)noteY, 200, (int)noteY + 50, (Color){80, 130, 220, 255});
-    // DrawText("Note", 100, (int)noteY, 20, BLACK);
-
-    // int x_start = 0, x_end = SCREEN_W;
-    //  int xc = x_start;
-    //  int y_start = SCREEN_H * 3 / 4;
-    //  int y_end = SCREEN_H;
-    //  int yc = y_start;
-
-    //  int octaves = 7;
-    //  int white_keys = 7*octaves;
-    //  int white_key_width = SCREEN_W / white_keys;
-
-    //  BresenhamLine(x_start, yc, x_end, yc, BLACK);
-    //  yc += 1;
-    //  BresenhamRectangle(x_start, yc, x_end, y_end, WHITE);
-    //  for (int i = 0; i < white_keys; i++) {
-
-    //      xc += white_key_width;
-    //      BresenhamLine(xc, y_start, xc, y_end, BLACK);
-    //  }
-
-    //  int pattern[7] = {1, 1, 0, 1, 1, 1, 0};
-    //  int black_key_width = white_key_width * 0.6;
-    //  int black_key_height = (y_end - y_start) * 0.6;
-
-    //  for (int i = 0; i < white_keys; i++) {
-    //      if (pattern[i % 7]) {
-    //          int x = i * white_key_width + white_key_width - black_key_width / 2;
-    //          BresenhamRectangle(x, y_start, x + black_key_width, y_start + black_key_height, BLACK);
-    //          }
-    //  }
+  ClearBackground(COLOR_BASE);
+  piano_draw(&piano);
+  BresenhamRectangle(100, (int)noteY, 200, (int)noteY + 50,
+                     (Color){80, 130, 220, 255});
 }
 
-void AnimScreen_Unload(void) {
-
-}
+void anim_screen_unload(void) {}

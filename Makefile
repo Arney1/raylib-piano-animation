@@ -2,7 +2,7 @@ CC     = gcc
 CFLAGS = -Wall -O2 -I. $(shell pkg-config --cflags raylib)
 LIBS   = $(shell pkg-config --libs raylib) -lm -ldl -lpthread
 
-TARGET = grafika_dda
+TARGET = app
 
 SRCS = src/main.c \
        src/graphics/dda.c \
@@ -10,6 +10,7 @@ SRCS = src/main.c \
        src/graphics/midcircle.c \
        src/screens/anim_screen.c \
        src/screens/menu_screen.c \
+       src/objects/piano.c \
        src/core/app.c
 
 

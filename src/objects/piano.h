@@ -4,9 +4,23 @@
 #include "../utils/screen_types.h"
 #include <raylib.h>
 
-void Piano_Init(void);
-void Piano_Update(int *flip);
-void Piano_Draw(Vector2 position_start, Vector2 position_end);
-void Piano_Unload(void);
+#define MAX_WHITE_KEYS (7*7 + 1)
+#define MAX_BLACK_KEYS (7*5)
+#define MAX_KEYS (MAX_WHITE_KEYS + MAX_BLACK_KEYS)
+
+typedef struct {
+    Rectangle white_keys[MAX_WHITE_KEYS];
+    Rectangle black_keys[MAX_BLACK_KEYS];
+    bool white_active[MAX_WHITE_KEYS];
+    bool black_active[MAX_BLACK_KEYS];
+    int white_count;
+    int black_count;
+} Piano;
+
+void piano_init(Piano *p, Vector2 start, Vector2 end);
+void piano_draw(Piano *p);
+void piano_activate_white(Piano *p, int index);
+void piano_activate_black(Piano *p, int index);
+void piano_clear(Piano *p);
 
 #endif

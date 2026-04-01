@@ -16,7 +16,7 @@ void App_Update(void) {
             MenuScreen_Update(&currentScreen);
             break;
         case SCREEN_ANIM:
-            AnimScreen_Update();
+            anim_screen_update();
             break;
         // case SCREEN_ABOUT:
         //     AboutScreen_Update(&currentScreen);
@@ -30,7 +30,7 @@ void App_Draw(void) {
             MenuScreen_Draw();
             break;
         case SCREEN_ANIM:
-            AnimScreen_Draw();
+            anim_screen_draw();
             break;
         // case SCREEN_ABOUT:
         //     AboutScreen_Draw();

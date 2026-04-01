@@ -17,12 +17,16 @@ void BresenhamLine(int x1, int y1, int x2, int y2, Color color) {
 }
 
 void BresenhamRectangle(int x1, int y1, int x2, int y2, Color color) {
-    int yc = y1;
-    while (yc < y2) {
+    BresenhamLine(x1, y1, x2, y1, color);
+    BresenhamLine(x2, y1, x2, y2, color);
+    BresenhamLine(x2, y2, x1, y2, color);
+    BresenhamLine(x1, y2, x1, y1, color);
+    // int yc = y1;
+    // while (yc < y2) {
 
-            BresenhamLine(x1, yc, x2, yc, color);
-            yc += 1;
-        }
+    //         BresenhamLine(x1, yc, x2, yc, color);
+    //         yc += 1;
+    //     }
 }
 
 void Bres_DashedLine(int x1, int y1, int x2, int y2,
