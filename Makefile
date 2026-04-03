@@ -2,7 +2,7 @@ CC     = gcc
 CFLAGS = -Wall -O2 -I. $(shell pkg-config --cflags raylib)
 LIBS   = $(shell pkg-config --libs raylib) -lm -ldl -lpthread
 
-TARGET = app
+TARGET = build/app
 
 SRCS = src/main.c \
        src/graphics/dda.c \
@@ -14,6 +14,7 @@ SRCS = src/main.c \
        src/objects/note_block.c \
        src/render/render_state.c \
        src/utils/draw_utils.c \
+       src/audio/audio.c \
        src/core/app.c
 
 

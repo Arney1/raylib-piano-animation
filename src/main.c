@@ -1,3 +1,4 @@
+#include "audio/audio.h"
 #include "raylib.h"
 #include "utils/color_palette.h"
 
@@ -9,14 +10,14 @@
 
 int main(void) {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Piano Animation - Raylib");
-  InitAudioDevice();
+  audio_init();
   SetTargetFPS(FPS);
 
   App_Init();
 
   while (!WindowShouldClose()) {
     App_Update();
-
+    audio_update();
     BeginDrawing();
 
     App_Draw();

@@ -1,3 +1,4 @@
+#include "../audio/audio.h"
 #include "../graphics/bresenham.h"
 #include "../graphics/midcircle.h"
 #include "../objects/note_block.h"
@@ -47,8 +48,24 @@ void anim_screen_update(void) {
     gRenderMode =
         (gRenderMode == RENDER_FILLED) ? RENDER_OUTLINE : RENDER_FILLED;
   }
-  if (GetRandomValue(0, 50) == 0) {
-    spawn_note_random();
+  if (GetRandomValue(0, 80) == 0) {
+    // spawn_note_random();
+    int spawn_notes_count = 4;
+    int spawn_in_octave = rand() % 7;
+    int keys[4] = {spawn_in_octave * 7, spawn_in_octave * 7 + 2,
+                   spawn_in_octave * 7 + 4, spawn_in_octave * 7 + 7};
+
+    for (int j = 0; j < spawn_notes_count; j++) {
+      for (int i = 0; i < MAX_NOTES; i++) {
+        if (!notes[i].active) {
+          int key = keys[j];
+          Rectangle r = piano.white_keys[key];
+
+          note_init(&notes[i], r.x, 0, r.width, rand() % 100 + 50, key, false);
+          break;
+        }
+      }
+    }
   }
   float piano_y = SCREEN_H * 3 / 4;
 
@@ -68,6 +85,7 @@ void anim_screen_update(void) {
         piano_set_black(&piano, n->key_index, true);
       else
         piano_set_white(&piano, n->key_index, true);
+      audio_play_note(n->key_index, n->is_black);
 
       n->triggered = true;
     }
@@ -77,7 +95,7 @@ void anim_screen_update(void) {
         piano_set_black(&piano, n->key_index, false);
       else
         piano_set_white(&piano, n->key_index, false);
-
+      audio_stop_note(n->key_index, n->is_black);
       n->active = false;
     }
   }
