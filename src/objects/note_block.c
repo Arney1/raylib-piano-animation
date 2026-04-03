@@ -12,7 +12,7 @@ void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index,
   n->active = true;
   n->triggered = false;
   // constant speed
-  n->vy = 200.0f;
+  n->vy = 225.0f;
   n->t = 0;
 }
 
@@ -39,5 +39,8 @@ void note_draw(NoteBlock *n) {
 
   // DrawRectGradientSmart(n->x, n->y, n->width, n->height, top, bottom);
 
+  // DrawSquircleGradientSmart((Rectangle){n->x, n->y, n->width, n->height},
+  // 0.2f,
+  //                           top, bottom);
   DrawSquircleSmart((Rectangle){n->x, n->y, n->width, n->height}, top, 0.2f);
 }

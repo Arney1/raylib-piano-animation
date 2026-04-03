@@ -2,10 +2,12 @@
 #include "../graphics/bresenham.h"
 #include "../graphics/midcircle.h"
 #include "../objects/midi.h"
+#include "../objects/midi_slider.h"
 #include "../objects/note_block.h"
 #include "../objects/piano.h"
 #include "../render/render_state.h"
 #include "../utils/color_palette.h"
+#include "../utils/draw_utils.h"
 #include "../utils/screen_types.h"
 #include "anim_screen.h"
 #include "raylib.h"
@@ -13,7 +15,7 @@
 #include <stdlib.h>
 
 #define MAX_NOTES 1024
-#define FALL_SPEED 200.0f
+#define FALL_SPEED 225.0f
 
 static NoteBlock notes[MAX_NOTES];
 static Piano piano;
@@ -87,20 +89,10 @@ void anim_screen_init(void) {
 }
 
 void anim_screen_update(void) {
-  Rectangle slider_rect = {50, 30, SCREEN_W - 100, 20};
-  Vector2 mouse = GetMousePosition();
-  if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && mouse.y >= slider_rect.y - 10 &&
-      mouse.y <= slider_rect.y + slider_rect.height + 10) {
-
-    // calculate where they clicked percentage-wise
-    float progress = (mouse.x - slider_rect.x) / slider_rect.width;
-    if (progress < 0.0f)
-      progress = 0.0f;
-    if (progress > 1.0f)
-      progress = 1.0f;
-
-    elapsed_music_time = progress * total_music_time;
-
+  Rectangle slider_track = {50, 30, SCREEN_W - 100, 20};
+  bool user_is_seeking =
+      midi_slider_update(slider_track, &elapsed_music_time, total_music_time);
+  if (user_is_seeking) {
     midi_seek(elapsed_music_time);
 
     // kill all current active notes
@@ -117,7 +109,6 @@ void anim_screen_update(void) {
       }
     }
   } else {
-
     elapsed_music_time += GetFrameTime();
   }
   midi_update(elapsed_music_time);
@@ -178,24 +169,7 @@ void anim_screen_draw(void) {
   }
   piano_draw(&piano);
   Rectangle slider_track = {50, 30, SCREEN_W - 100, 10};
-  DrawRectangleRec(slider_track, DARKGRAY);
-
-  float progress = 0.0f;
-  if (total_music_time > 0) {
-    progress = elapsed_music_time / total_music_time;
-  }
-  if (progress < 0.0f)
-    progress = 0.0f;
-  if (progress > 1.0f)
-    progress = 1.0f;
-
-  Rectangle slider_fill = {slider_track.x, slider_track.y,
-                           slider_track.width * progress, slider_track.height};
-  DrawRectangleRec(slider_fill, LIGHTGRAY);
-
-  // slider thumb
-  DrawCircle(slider_fill.x + slider_fill.width,
-             slider_fill.y + slider_fill.height / 2, 8, WHITE);
+  midi_slider_draw(slider_track, elapsed_music_time, total_music_time);
 }
 
 void anim_screen_unload(void) { piano_clear(&piano); }

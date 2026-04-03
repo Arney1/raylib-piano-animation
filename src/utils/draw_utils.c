@@ -12,6 +12,23 @@ void DrawRectSmart(float x, float y, float w, float h, Color color) {
   }
 }
 
+void DrawRectGradientSmart(float x, float y, float w, float h, Color c1,
+                           Color c2) {
+  if (gRenderMode == RENDER_FILLED) {
+    DrawRectangleGradientV(x, y, w, h, c1, c2);
+  } else {
+    Color c;
+    c.r = (c1.r + c2.r) / 2;
+    c.g = (c1.g + c2.g) / 2;
+    c.b = (c1.b + c2.b) / 2;
+    c.a = (c1.a + c2.a) / 2;
+    // for (int i = 0; i < 4; i++) {
+    //   c[i] = (c1[i] + c2[i]) / 2;
+    // }
+    BresenhamRectangle(x, y, x + w, y + h, c);
+  }
+}
+
 void DrawSquircleSmart(Rectangle r, Color color, float rad_percent) {
   float eps = 0.75f;
   float x, y, w, h, rad;
@@ -25,10 +42,10 @@ void DrawSquircleSmart(Rectangle r, Color color, float rad_percent) {
     y = r.y + rad;
     w = r.width;
     h = r.height - 2 * rad;
-    centers[0] = (Vector2){x + rad + eps, y + eps};
-    centers[1] = (Vector2){x + w - rad - eps, y + eps};
-    centers[3] = (Vector2){x + rad + eps, y + h - eps};
-    centers[2] = (Vector2){x + w - rad - eps, y + h - eps};
+    centers[0] = (Vector2){x + rad + eps, y + eps};         // top left
+    centers[1] = (Vector2){x + w - rad - eps, y + eps};     // top right
+    centers[3] = (Vector2){x + rad + eps, y + h - eps};     // bottom left
+    centers[2] = (Vector2){x + w - rad - eps, y + h - eps}; // bottom right
   } else {
     rad = rad_percent * r.height;
     x = r.x + rad;
@@ -36,8 +53,8 @@ void DrawSquircleSmart(Rectangle r, Color color, float rad_percent) {
     w = r.width - 2 * rad;
     h = r.height;
     centers[0] = (Vector2){x + eps, y + rad + eps};
-    centers[1] = (Vector2){x - eps, y + h - rad + eps};
-    centers[3] = (Vector2){x + w + eps, y + rad - eps};
+    centers[1] = (Vector2){x + w - eps, y + rad + eps};
+    centers[3] = (Vector2){x + eps, y + h - rad - eps};
     centers[2] = (Vector2){x + w - eps, y + h - rad - eps};
   }
   if (gRenderMode == RENDER_FILLED) {
@@ -54,6 +71,7 @@ void DrawSquircleSmart(Rectangle r, Color color, float rad_percent) {
       DrawRectangle(x + w - eps, r.y + rad - eps, rad + eps,
                     h - 2 * rad + 2 * eps, color);
     }
+
     for (int i = 0; i < 4; i++) {
       DrawCircleSector(centers[i], rad + 0.17f, (i + 2) * 90.0f,
                        (i + 3) * 90.0f, 100, color);
@@ -89,19 +107,89 @@ void DrawSquircleSmart(Rectangle r, Color color, float rad_percent) {
   }
 }
 
-void DrawRectGradientSmart(float x, float y, float w, float h, Color c1,
-                           Color c2) {
+void DrawSquircleGradientSmart(Rectangle r, float rad_percent, Color c1,
+                               Color c2) {
+  float eps = 0.75f;
+  float x, y, w, h, rad;
+  Vector2 centers[4];
+  // rad_percent maximum is 0.5
+  if (rad_percent > 0.5f)
+    rad_percent = 0.5f;
+  if (r.width < r.height) {
+    rad = rad_percent * r.width;
+    x = r.x;
+    y = r.y + rad;
+    w = r.width;
+    h = r.height - 2 * rad;
+    centers[0] = (Vector2){x + rad + eps, y + eps};         // top left
+    centers[1] = (Vector2){x + w - rad - eps, y + eps};     // top right
+    centers[3] = (Vector2){x + rad + eps, y + h - eps};     // bottom left
+    centers[2] = (Vector2){x + w - rad - eps, y + h - eps}; // bottom right
+  } else {
+    rad = rad_percent * r.height;
+    x = r.x + rad;
+    y = r.y;
+    w = r.width - 2 * rad;
+    h = r.height;
+    centers[0] = (Vector2){x + eps, y + rad + eps};
+    centers[1] = (Vector2){x + w - eps, y + rad + eps};
+    centers[3] = (Vector2){x + eps, y + h - rad - eps};
+    centers[2] = (Vector2){x + w - eps, y + h - rad - eps};
+  }
   if (gRenderMode == RENDER_FILLED) {
+    if (r.width < r.height) {
+
+      DrawRectangle(r.x + rad - eps, r.y, w - 2 * rad + 2 * eps, rad + eps, c1);
+      DrawRectangle(r.x + rad - eps, y + h - eps, w - 2 * rad + 2 * eps,
+                    rad + eps, c2);
+    } else {
+      DrawRectangle(r.x, r.y + rad - eps, rad + eps, h - 2 * rad + 2 * eps, c1);
+
+      DrawRectangle(x + w - eps, r.y + rad - eps, rad + eps,
+                    h - 2 * rad + 2 * eps, c2);
+    }
+
+    for (int i = 0; i < 2; i++) {
+      DrawCircleSector(centers[i], rad + 0.17f, (i + 2) * 90.0f,
+                       (i + 3) * 90.0f, 100, c1);
+    }
+    for (int i = 2; i < 4; i++) {
+      DrawCircleSector(centers[i], rad + 0.17f, (i + 2) * 90.0f,
+                       (i + 3) * 90.0f, 100, c2);
+    }
+
     DrawRectangleGradientV(x, y, w, h, c1, c2);
   } else {
+    // Average color for outline
     Color c;
     c.r = (c1.r + c2.r) / 2;
     c.g = (c1.g + c2.g) / 2;
     c.b = (c1.b + c2.b) / 2;
     c.a = (c1.a + c2.a) / 2;
-    // for (int i = 0; i < 4; i++) {
-    //   c[i] = (c1[i] + c2[i]) / 2;
-    // }
-    BresenhamRectangle(x, y, x + w, y + h, c);
+    DrawSquircleSmart(r, c, rad_percent);
+  }
+}
+
+void DrawCircleSmart(float cx, float cy, float radius, Color color) {
+  if (gRenderMode == RENDER_FILLED) {
+    DrawCircle((int)cx, (int)cy, radius, color);
+  } else {
+    Midcircle((int)cx, (int)cy, (int)radius, color);
+  }
+}
+
+void DrawCircleGradientSmart(float cx, float cy, float radius, Color c1,
+                             Color c2) {
+  if (gRenderMode == RENDER_FILLED) {
+    // Note: Raylib only supports radial gradients natively for circles
+    DrawCircleGradient((int)cx, (int)cy, radius, c1, c2);
+  } else {
+    // Average color for outline
+    Color c;
+    c.r = (c1.r + c2.r) / 2;
+    c.g = (c1.g + c2.g) / 2;
+    c.b = (c1.b + c2.b) / 2;
+    c.a = (c1.a + c2.a) / 2;
+    Midcircle((int)cx, (int)cy, (int)radius, c);
   }
 }

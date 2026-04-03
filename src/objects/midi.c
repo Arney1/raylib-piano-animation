@@ -42,9 +42,9 @@ void midi_load(const char *filename) {
   while (fgets(line, sizeof(line), f)) {
     MidiNote n;
     int program;
-    char is_drum_str[16]; // Buffer to hold "True" or "False"
+    char is_drum_str[16]; // buffer to hold true or false
 
-    // Use %[^,] to read the string up until the next comma
+    // %[^,] : read the string until the next comma
     if (sscanf(line, "%d,%15[^,],%f,%f,%d,%d", &program, is_drum_str, &n.start,
                &n.end, &n.pitch, &n.velocity) == 6) {
 
