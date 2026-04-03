@@ -11,7 +11,8 @@ void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index,
   n->is_black = is_black;
   n->active = true;
   n->triggered = false;
-  n->vy = 0;
+  // constant speed
+  n->vy = 200.0f;
   n->t = 0;
 }
 
@@ -20,12 +21,9 @@ void note_update(NoteBlock *n) {
     return;
 
   float dt = GetFrameTime();
-  // float dt = 1.0f;
   n->t += dt;
 
-  // // gravity motion
-  float gravity = 25.0f; // tune this
-  n->vy += gravity * dt;
+  // linear motion
   n->y += n->vy * dt;
 }
 
