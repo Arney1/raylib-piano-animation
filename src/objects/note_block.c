@@ -3,9 +3,9 @@
 
 void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index,
                bool is_black) {
-  n->x = x;
+  n->x = x + 1.0f;
   n->y = y;
-  n->width = w;
+  n->width = w - 2.0f;
   n->height = h;
   n->key_index = key_index;
   n->is_black = is_black;

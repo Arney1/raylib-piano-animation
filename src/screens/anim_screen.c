@@ -10,6 +10,7 @@
 #include "../utils/draw_utils.h"
 #include "../utils/screen_types.h"
 #include "anim_screen.h"
+#include "menu_screen.h"
 #include "raylib.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -21,6 +22,7 @@ static NoteBlock notes[MAX_NOTES];
 static Piano piano;
 static float elapsed_music_time = 0.0f;
 static float total_music_time = 1.0f;
+static bool is_anim_active = false;
 
 void get_key_from_pitch(int pitch, int *key_index, bool *is_black) {
   int octave = pitch / 12;
@@ -75,6 +77,7 @@ void spawn_note_from_pitch(int pitch, float duration, float time_until_hit) {
 }
 
 void anim_screen_init(void) {
+  is_anim_active = true;
   midi_load("assets/midis/output.csv");
   midi_reset();
   total_music_time = midi_get_length();
@@ -88,8 +91,22 @@ void anim_screen_init(void) {
   }
 }
 
-void anim_screen_update(void) {
-  Rectangle slider_track = {50, 30, SCREEN_W - 100, 20};
+void anim_screen_update(Screen *currentScreen) {
+  if (IsKeyPressed(KEY_BACKSPACE)) {
+    for (int i = 0; i < MAX_NOTES; i++) {
+      if (notes[i].active && notes[i].triggered) {
+        audio_stop_note(notes[i].key_index, notes[i].is_black);
+      }
+    }
+
+    *currentScreen = SCREEN_MENU;
+    anim_screen_unload();
+    menu_screen_init();
+    return;
+  }
+
+  // 2. Lower the slider track so it doesn't overlap the back button
+  Rectangle slider_track = {50, 70, SCREEN_W - 100, 10};
   bool user_is_seeking =
       midi_slider_update(slider_track, &elapsed_music_time, total_music_time);
   if (user_is_seeking) {
@@ -163,13 +180,36 @@ void anim_screen_update(void) {
 }
 
 void anim_screen_draw(void) {
+  if (!is_anim_active)
+    return;
   ClearBackground(COLOR_BASE);
   for (int i = 0; i < MAX_NOTES; i++) {
     note_draw(&notes[i]);
   }
   piano_draw(&piano);
-  Rectangle slider_track = {50, 30, SCREEN_W - 100, 10};
+  Rectangle slider_track = {50, 70, SCREEN_W - 100, 10};
   midi_slider_draw(slider_track, elapsed_music_time, total_music_time);
+
+  const char *hints = "[Backspace] : Back  |  [Esc] : Exit  |  [O] : Outline  "
+                      "|  [<-] / [->] : Seek";
+  int fontSize = 20;
+  int textWidth = MeasureText(hints, fontSize);
+  int padY = 12;
+
+  Rectangle hintBg = {50.0f, 20.0f, SCREEN_W - 100.0f,
+                      fontSize + (padY * 2.0f)};
+
+  Color bgCol = COLOR_SURFACE;
+  bgCol.a = 200;
+
+  DrawSquircleSmart(hintBg, bgCol, 0.4f);
+
+  float textX = hintBg.x + (hintBg.width / 2.0f) - (textWidth / 2.0f);
+
+  DrawText(hints, (int)textX, (int)(hintBg.y + padY), fontSize, COLOR_TEXT);
 }
 
-void anim_screen_unload(void) { piano_clear(&piano); }
+void anim_screen_unload(void) {
+  is_anim_active = false;
+  piano_clear(&piano);
+}

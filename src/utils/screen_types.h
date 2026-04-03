@@ -7,7 +7,7 @@
 typedef enum {
     SCREEN_MENU,
     SCREEN_ANIM,
-    SCREEN_ABOUT
+    SCREEN_OBJECTS
 } Screen;
 
 #endif

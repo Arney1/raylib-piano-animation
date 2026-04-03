@@ -1,32 +1,39 @@
 #include "../utils/draw_utils.h"
 #include "midi_slider.h"
 
+static float hold_time = 0.0f;
+
 bool midi_slider_update(Rectangle bounds, float *elapsed_time,
                         float total_time) {
-  Vector2 mouse = GetMousePosition();
+  bool seeking = false;
+  float base_skip_speed = 3.0f;
 
-  // expanded hitbox
-  Rectangle hit_rect = {bounds.x, bounds.y - 10, bounds.width,
-                        bounds.height + 20};
+  if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_LEFT)) {
+    hold_time += GetFrameTime();
 
-  if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && mouse.y >= hit_rect.y &&
-      mouse.y <= hit_rect.y + hit_rect.height) {
+    // exponential
+    float current_speed =
+        base_skip_speed * (1.0f + (hold_time * hold_time) * 15.0f);
+    float delta = current_speed * GetFrameTime();
 
-    float progress = (mouse.x - bounds.x) / bounds.width;
-    if (progress < 0.0f)
-      progress = 0.0f;
-    if (progress > 1.0f)
-      progress = 1.0f;
-
-    if (total_time > 0.0f) {
-      *elapsed_time = progress * total_time;
+    if (IsKeyDown(KEY_LEFT)) {
+      *elapsed_time -= delta;
+    } else {
+      *elapsed_time += delta;
     }
-    return true;
+
+    if (*elapsed_time < -5.0f)
+      *elapsed_time = -5.0f;
+    if (*elapsed_time > total_time)
+      *elapsed_time = total_time;
+
+    seeking = true;
+  } else {
+    hold_time = 0.0f;
   }
 
-  return false;
+  return seeking;
 }
-
 void midi_slider_draw(Rectangle bounds, float elapsed_time, float total_time) {
   DrawSquircleSmart(bounds, LIGHTGRAY, 0.5f);
 

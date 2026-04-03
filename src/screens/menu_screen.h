@@ -3,8 +3,9 @@
 
 #include "../utils/screen_types.h"
 
-void MenuScreen_Init(void);
-void MenuScreen_Update(Screen *currentScreen);
-void MenuScreen_Draw(void);
+void menu_screen_init(void);
+void menu_screen_update(Screen *currentScreen);
+void menu_screen_draw(void);
+void menu_screen_unload(void);
 
 #endif
