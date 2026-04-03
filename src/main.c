@@ -26,6 +26,7 @@ int main(void) {
   }
 
   App_Unload();
+  audio_unload();
   CloseWindow();
 
   return 0;

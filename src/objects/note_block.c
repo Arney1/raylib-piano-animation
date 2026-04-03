@@ -24,7 +24,7 @@ void note_update(NoteBlock *n) {
   n->t += dt;
 
   // // gravity motion
-  float gravity = 250.0f; // tune this
+  float gravity = 25.0f; // tune this
   n->vy += gravity * dt;
   n->y += n->vy * dt;
 }

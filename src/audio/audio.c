@@ -6,6 +6,8 @@
 #define BUFFER_SIZE 4096
 #define SAMPLE_RATE 44100
 #define MAX_VOICES 32
+#define MASTER_VOLUME 1.0f    // global output
+#define VOICE_MIX_LEVEL 0.25f // a single voice
 
 static Voice voices[MAX_VOICES] = {0};
 static AudioStream stream;
@@ -48,7 +50,7 @@ void audio_init() {
 void audio_play_note(int key_index, bool is_black) {
   float freq = 0.0f;
 
-  // Grab the correct frequency from our pre-calculated arrays
+  // grab the correct freq from pre-calculated freqs arrays
   if (is_black && key_index < MAX_BLACK_KEYS) {
     freq = black_frequencies[key_index];
   } else if (!is_black && key_index < MAX_WHITE_KEYS) {
@@ -56,7 +58,7 @@ void audio_play_note(int key_index, bool is_black) {
   }
 
   if (freq == 0.0f)
-    return; // Safety check
+    return; // safety check
 
   for (int i = 0; i < MAX_VOICES; i++) {
     if (!voices[i].active) {
@@ -105,7 +107,7 @@ void audio_update() {
 
         // volume envelope processing
         if (voices[v].releasing) {
-          voices[v].volume -= 0.0002f; // fade out to mimic a piano key lifting
+          voices[v].volume -= 0.011f; // fade out to mimic a piano key lifting
           if (voices[v].volume <= 0.0f) {
             voices[v].volume = 0.0f;
             voices[v].active = false;
@@ -114,11 +116,12 @@ void audio_update() {
         } else {
           if (voices[v].volume < 1.0f) {
             voices[v].volume +=
-                0.005f; // smooth fade in (prevents instant attack clicking)
+                0.01f; // smooth fade in (prevents instant attack clicking)
           }
         }
 
-        buffer[i] += sinf(voices[v].phase) * voices[v].volume * 0.05f;
+        buffer[i] += sinf(voices[v].phase) * voices[v].volume *
+                     VOICE_MIX_LEVEL * MASTER_VOLUME;
 
         // advance phase
         voices[v].phase += phaseInc;

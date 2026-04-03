@@ -25,8 +25,8 @@ void spawn_note_random(void) {
       int key = rand() % (!is_black ? piano.white_count : piano.black_count);
 
       Rectangle r = is_black ? piano.black_keys[key] : piano.white_keys[key];
-
-      note_init(&notes[i], r.x, 0, r.width, rand() % 100 + 50, key, is_black);
+      float h = rand() % 100 + 50;
+      note_init(&notes[i], r.x, -h, r.width, h, key, is_black);
 
       break;
     }
@@ -53,15 +53,15 @@ void anim_screen_update(void) {
     int spawn_notes_count = 4;
     int spawn_in_octave = rand() % 7;
     int keys[4] = {spawn_in_octave * 7, spawn_in_octave * 7 + 2,
-                   spawn_in_octave * 7 + 4, spawn_in_octave * 7 + 7};
+                   spawn_in_octave * 7 + 4, spawn_in_octave * 7 + 6};
 
     for (int j = 0; j < spawn_notes_count; j++) {
       for (int i = 0; i < MAX_NOTES; i++) {
         if (!notes[i].active) {
           int key = keys[j];
           Rectangle r = piano.white_keys[key];
-
-          note_init(&notes[i], r.x, 0, r.width, rand() % 100 + 50, key, false);
+          float h = rand() % 100 + 50;
+          note_init(&notes[i], r.x, -h, r.width, h, key, false);
           break;
         }
       }
