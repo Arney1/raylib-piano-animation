@@ -47,7 +47,7 @@ void anim_screen_update(void) {
     gRenderMode =
         (gRenderMode == RENDER_FILLED) ? RENDER_OUTLINE : RENDER_FILLED;
   }
-  if (GetRandomValue(0, 65) == 0) {
+  if (GetRandomValue(0, 50) == 0) {
     spawn_note_random();
   }
   float piano_y = SCREEN_H * 3 / 4;

@@ -17,6 +17,9 @@ typedef struct {
 
     bool active;
     bool triggered;
+
+    float vy;   // vertical velocity
+    float t;
 } NoteBlock;
 
 void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index, bool is_black);

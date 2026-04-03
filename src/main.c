@@ -3,30 +3,29 @@
 
 #include "core/app.h"
 
-#define SCREEN_WIDTH  1600
+#define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 #define FPS 60
 
-int main(void)
-{
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Piano Animation - Raylib");
-    SetTargetFPS(FPS);
+int main(void) {
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Piano Animation - Raylib");
+  InitAudioDevice();
+  SetTargetFPS(FPS);
 
-    App_Init();
+  App_Init();
 
-    while (!WindowShouldClose())
-    {
-        App_Update();
+  while (!WindowShouldClose()) {
+    App_Update();
 
-        BeginDrawing();
+    BeginDrawing();
 
-        App_Draw();
+    App_Draw();
 
-        EndDrawing();
-    }
+    EndDrawing();
+  }
 
-    App_Unload();
-    CloseWindow();
+  App_Unload();
+  CloseWindow();
 
-    return 0;
+  return 0;
 }

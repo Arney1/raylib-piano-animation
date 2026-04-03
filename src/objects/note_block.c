@@ -11,13 +11,22 @@ void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index,
   n->is_black = is_black;
   n->active = true;
   n->triggered = false;
+  n->vy = 0;
+  n->t = 0;
 }
 
 void note_update(NoteBlock *n) {
   if (!n->active)
     return;
 
-  n->y += NOTE_SPEED;
+  float dt = GetFrameTime();
+  // float dt = 1.0f;
+  n->t += dt;
+
+  // // gravity motion
+  float gravity = 250.0f; // tune this
+  n->vy += gravity * dt;
+  n->y += n->vy * dt;
 }
 
 void note_draw(NoteBlock *n) {
@@ -30,5 +39,7 @@ void note_draw(NoteBlock *n) {
   Color bottom =
       n->is_black ? (Color){60, 60, 200, 255} : (Color){255, 120, 60, 255};
 
-  DrawRectGradientSmart(n->x, n->y, n->width, n->height, top, bottom);
+  // DrawRectGradientSmart(n->x, n->y, n->width, n->height, top, bottom);
+
+  DrawSquircleSmart((Rectangle){n->x, n->y, n->width, n->height}, top, 0.2f);
 }
