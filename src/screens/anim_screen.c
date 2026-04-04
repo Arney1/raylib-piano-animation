@@ -26,10 +26,13 @@ static float total_music_time = 1.0f;
 static bool is_anim_active = false;
 
 void get_key_from_pitch(int pitch, int *key_index, bool *is_black) {
+  // split pitch into octave number and semitone within that octave
   int octave = pitch / 12;
   int note = pitch % 12; // 0=C, 1=C#, 2=D, 3=D#, 4=E, etc.
 
-  // map the 12 semi-tones to the respective index offsets in the arrays
+  // lookup tables: index = semitone, value = position within white/black key
+  // array for that octave. -1 means "not this type" (e.g. C is not a black key
+  // so black_offsets[0] = -1)
   int white_offsets[] = {0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6};
   int black_offsets[] = {-1, 0, -1, 1, -1, -1, 2, -1, 3, -1, 4, -1};
 
@@ -59,16 +62,18 @@ void spawn_note_from_pitch(int pitch, float duration, float time_until_hit) {
       Rectangle r =
           is_black ? piano.black_keys[key_index] : piano.white_keys[key_index];
 
-      // scale height to match the falling speed
+      // note height in pixels = how long it's held * fall speed (pixels/sec)
       float h = duration * FALL_SPEED;
+      // minimum height so very short notes are still visible
       if (h < 10.0f)
-        h = 10.0f; // short notes visible
+        h = 10.0f;
 
       float piano_y = SCREEN_H * 3.0f / 4.0f;
+      // how far above the piano line the bottom of the note should start
       float distance = time_until_hit * FALL_SPEED;
 
-      // calculate start position so the bottom edge hits the piano exactly on
-      // time
+      // spawn_y: piano_y minus the travel distance minus the note's own height
+      // so the bottom edge arrives exactly at piano_y when it hits
       float spawn_y = piano_y - distance - h;
 
       note_init(&notes[i], r.x, spawn_y, r.width, h, key_index, is_black);
@@ -82,6 +87,7 @@ void anim_screen_init(void) {
   midi_load("assets/midis/output.csv");
   midi_reset();
   total_music_time = midi_get_length();
+  // start at -5s so there's a short delay before the first notes arrive
   elapsed_music_time = -5.0f;
 
   piano_init(&piano, (Vector2){0, SCREEN_H * 3 / 4},
@@ -130,6 +136,7 @@ void anim_screen_update(Screen *currentScreen) {
       }
     }
   } else {
+    // advance music clock
     elapsed_music_time += GetFrameTime();
   }
 
@@ -153,7 +160,8 @@ void anim_screen_update(Screen *currentScreen) {
 
     float bottom = n->y;
 
-    // delete notes
+    // deactivate once the top edge (or bottom as in the last one to touch the
+    // piano line) crosses the piano line
     if (n->triggered && bottom >= piano_y) {
       if (n->is_black)
         piano_set_black(&piano, n->key_index, false);
@@ -165,7 +173,7 @@ void anim_screen_update(Screen *currentScreen) {
     }
   }
 
-  // then play notes, ensures a brand new note wont be stopped by an old note
+  // trigger notes whose bottom+height reached the piano line
   for (int i = 0; i < MAX_NOTES; i++) {
     NoteBlock *n = &notes[i];
 

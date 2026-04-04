@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #define MAX_MIDI_NOTES 5000
+// how many seconds ahead to spawn notes before theyre supposed to hit
 #define LOOKAHEAD_TIME 5.0f
 
 static MidiNote notes[MAX_MIDI_NOTES];
@@ -13,6 +14,7 @@ static int note_count = 0;
 float midi_get_length(void) {
   if (note_count == 0)
     return 0.0f;
+  // last note's end time = total song duration
   return notes[note_count - 1].end;
 }
 
@@ -45,6 +47,7 @@ void midi_load(const char *filename) {
     char is_drum_str[16]; // buffer to hold true or false
 
     // %[^,] : read the string until the next comma
+    // program, is_drum, start, end, pitch, velocity
     if (sscanf(line, "%d,%15[^,],%f,%f,%d,%d", &program, is_drum_str, &n.start,
                &n.end, &n.pitch, &n.velocity) == 6) {
 
@@ -73,6 +76,8 @@ void midi_update(float time) {
     float duration = n->end - n->start;
     float time_until_hit = n->start - time; // calculate how long til it hits
 
+    // shift pitch down one octave which is 12 semitones to fit the on-screen
+    // keyboard range
     spawn_note_from_pitch(n->pitch - 12, duration, time_until_hit);
 
     current_index++;

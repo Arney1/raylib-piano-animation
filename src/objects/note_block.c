@@ -3,6 +3,7 @@
 
 void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index,
                bool is_black) {
+  // inset x by 1px and shrink width by 2px so adjacent notes have a visible gap
   n->x = x + 1.0f;
   n->y = y;
   n->width = w - 2.0f;
@@ -11,7 +12,7 @@ void note_init(NoteBlock *n, float x, float y, float w, float h, int key_index,
   n->is_black = is_black;
   n->active = true;
   n->triggered = false;
-  // constant speed
+  // constant speed, match fall_speed in anim_screen.c
   n->vy = 225.0f;
   n->t = 0;
 }
@@ -23,7 +24,7 @@ void note_update(NoteBlock *n) {
   float dt = GetFrameTime();
   n->t += dt;
 
-  // linear motion
+  // linear motion move downward (pixels per second * seconds = pixels)
   n->y += n->vy * dt;
 }
 

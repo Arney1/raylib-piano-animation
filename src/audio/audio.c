@@ -8,6 +8,7 @@
 #define MAX_VOICES 32
 #define MASTER_VOLUME 1.0f
 #define VOICE_MIX_LEVEL 0.25f
+// controls how fast the note decays, larger means faster drop in volume
 #define DECAY_K 0.00008f
 
 static Voice voices[MAX_VOICES] = {0};
@@ -24,10 +25,13 @@ void audio_init() {
   PlayAudioStream(stream);
 
   int white_idx = 0, black_idx = 0;
+  // midi note 24 = C1, lowest key
   int base_midi_note = 24;
   for (int i = 0; i < 85; i++) {
+    // equal temperament formula: freq = 440 * 2^((midi - 69) / 12)
     float freq = 440.0f * powf(2.0f, ((base_midi_note + i) - 69) / 12.0f);
     int note_in_octave = i % 12;
+    // semitones 1,3,6,8,10 are the black keys in a chromatic scale
     bool is_black =
         (note_in_octave == 1 || note_in_octave == 3 || note_in_octave == 6 ||
          note_in_octave == 8 || note_in_octave == 10);
@@ -67,6 +71,7 @@ void audio_stop_note(int key_index, bool is_black) {
   else if (!is_black && key_index < MAX_WHITE_KEYS)
     freq = white_frequencies[key_index];
 
+  // match by frequency with a small tolerance to handle floating point drift
   for (int i = 0; i < MAX_VOICES; i++) {
     if (voices[i].active && fabsf(voices[i].frequency - freq) < 1.0f)
       voices[i].releasing = true;
@@ -82,10 +87,15 @@ void audio_update() {
       if (!voices[v].active)
         continue;
 
+      // phase increment per sample, that is, how much of the sine wave to step
+      // each tick
+      // derived from: cycles_per_second / samples_per_second = fraction of full
+      // cycle
       float phaseInc = (2.0f * PI * voices[v].frequency) / (float)SAMPLE_RATE;
 
       for (int i = 0; i < BUFFER_SIZE; i++) {
         if (voices[v].releasing) {
+          // linear fade out on release, step of 0.011 per sample
           voices[v].volume -= 0.011f;
           if (voices[v].volume <= 0.0f) {
             voices[v].volume = 0.0f;
@@ -93,14 +103,18 @@ void audio_update() {
             break;
           }
         } else {
-          // smooth attack
+          // ramp volume up by 0.01 per sample to avoid click or popping. its
+          // called attack in audio world
           if (voices[v].volume < 1.0f)
             voices[v].volume += 0.01f;
 
-          // logarithmic sustain decay: 1 / (1 + k * t)
+          // logarithmic decay: 1 / (1 + k * t), approaches 0 but never reaches
+          // it
+          // decay_time counts samples elapsed since note start
           voices[v].decay_time += 1.0f;
           float decay = 1.0f / (1.0f + DECAY_K * voices[v].decay_time);
-
+          // final sample = sine wave * envelope * decay * mix level * master
+          // vol
           buffer[i] += sinf(voices[v].phase) * voices[v].volume * decay *
                        VOICE_MIX_LEVEL * MASTER_VOLUME;
 
@@ -111,7 +125,7 @@ void audio_update() {
           continue; // skip the non-decaying write below
         }
 
-        // releasing path still needs to write a sample
+        // releasing path: no decay applied, just envelope * mix
         buffer[i] += sinf(voices[v].phase) * voices[v].volume *
                      VOICE_MIX_LEVEL * MASTER_VOLUME;
 

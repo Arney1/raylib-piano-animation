@@ -22,9 +22,11 @@ void particle_spawn(float x, float y, Color color) {
       particles[i].x = x;
       particles[i].y = y;
       particles[i].lifetime = 0.0f;
+      // base lifetime 1.5s with a small random offset of +-0.2s
       particles[i].maxLife = 1.5f + (GetRandomValue(-2, 2) * 0.1f);
       particles[i].scale = 0.0f;
       particles[i].color = color;
+      // random phase offset in [0, pi] so particles dont all sway in sync
       particles[i].waveOffset = GetRandomValue(0, 314) / 100.0f;
       break;
     }
@@ -45,16 +47,20 @@ void particle_system_update(void) {
       p->active = false;
       continue;
     }
-
+    // normalized time in [0,1] across the particle's full lifetime
     float lifeRatio = p->lifetime / p->maxLife;
+
+    // scale follows sin(ratio * pi) so it smoothly rises then falls back to 0
     p->scale = sinf(lifeRatio * PI);
 
     float floatSpeed = 100.0f;
     float waveFreq = 5.0f;
     float waveAmp = 20.0f;
-
+    // linear upward drift, 100px total over the full lifetime
     p->y = p->startY - (lifeRatio * floatSpeed);
 
+    // horizontal sine wave with frequency 5hz, amplitude 20px, and offset per
+    // particle
     p->x = p->startX + sinf((p->lifetime * waveFreq) + p->waveOffset) * waveAmp;
   }
 }
@@ -70,6 +76,8 @@ void particle_system_draw(void) {
     int base_ry = 6;
     int base_stem = 24;
 
+    // scale down all dimensions by the current scale so the note shrinks as it
+    // fades
     int rx = (int)(base_rx * p->scale);
     int ry = (int)(base_ry * p->scale);
     int stem_h = (int)(base_stem * p->scale);
@@ -80,6 +88,7 @@ void particle_system_draw(void) {
     int cy = (int)p->y;
 
     Color pColor = p->color;
+    // alpha also follows scale, so it fades in and out together with the size
     pColor.a = (unsigned char)(255 * p->scale);
 
     if (gRenderMode == RENDER_FILLED) {

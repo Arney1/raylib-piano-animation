@@ -16,6 +16,7 @@ void piano_init(Piano *p, Vector2 start, Vector2 end) {
 
   for (int i = 0; i < MAX_WHITE_KEYS - 1; i++) {
     p->white_keys[i] = (Rectangle){xc, y_start, white_w, white_h};
+    // step xc forward by one white key width each iteration
     xc += white_w;
     p->white_active[i] = false;
   }
@@ -81,11 +82,15 @@ void piano_draw(Piano *p) {
     // cuts between white keys
     for (int i = 1; i < p->white_count; i++) {
       int x = p->white_keys[i].x;
+      // divider starts at the top unless a black key is sitting on this
+      // boundary
       int y_cut = y_start;
 
       for (int j = 0; j < p->black_count; j++) {
         Rectangle bk = p->black_keys[j];
+        // check if this white key boundary falls inside a black key's x range
         if (x > bk.x && x < (bk.x + bk.width)) {
+          // start the divider below the black key so it doesn't overlap
           y_cut = bk.y + bk.height;
           break;
         }
