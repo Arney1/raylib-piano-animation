@@ -37,10 +37,6 @@ void note_draw(NoteBlock *n) {
   Color bottom =
       n->is_black ? (Color){60, 60, 200, 255} : (Color){255, 120, 60, 255};
 
-  // DrawRectGradientSmart(n->x, n->y, n->width, n->height, top, bottom);
-
-  // DrawSquircleGradientSmart((Rectangle){n->x, n->y, n->width, n->height},
-  // 0.2f,
-  //                           top, bottom);
-  DrawSquircleSmart((Rectangle){n->x, n->y, n->width, n->height}, top, 0.2f);
+  DrawSquircleGradientSmart((Rectangle){n->x, n->y, n->width, n->height}, 0.2f,
+                            top, bottom);
 }

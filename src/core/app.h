@@ -7,5 +7,6 @@ void App_Init(void);
 void App_Update(void);
 void App_Draw(void);
 void App_Unload(void);
+bool App_ShouldClose(void);
 
 #endif

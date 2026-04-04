@@ -1,7 +1,8 @@
 #include "../objects/midi_slider.h"
 #include "../objects/note_block.h"
+#include "../objects/note_particle.h"
 #include "../objects/piano.h"
-#include "../render/render_state.h" // Added for Outline mode!
+#include "../render/render_state.h"
 #include "../utils/color_palette.h"
 #include "../utils/draw_utils.h"
 #include "../utils/screen_types.h"
@@ -11,9 +12,9 @@
 #include <stdbool.h>
 
 static int current_object_index = 0;
-static const int NUM_OBJECTS = 3;
+static const int NUM_OBJECTS = 4;
 static const char *object_names[] = {"1. Piano", "2. Note Block",
-                                     "3. MIDI Slider"};
+                                     "3. MIDI Slider", "4. Note Particle"};
 
 static bool is_objects_active = false;
 static bool animations_enabled = false;
@@ -27,6 +28,8 @@ static int last_pressed_black = -1;
 
 static float slider_elapsed = 0.0f;
 static float slider_total = 5.0f;
+
+static float particle_timer = 0.0f;
 
 // centralized card boundaries
 static Rectangle get_card_rect(void) {
@@ -49,6 +52,7 @@ void objects_screen_init(void) {
   obj_note.active = true;
 
   slider_elapsed = 0.0f;
+  particle_system_init();
 }
 
 void objects_screen_update(Screen *currentScreen) {
@@ -87,9 +91,10 @@ void objects_screen_update(Screen *currentScreen) {
 
       slider_elapsed = slider_total / 2.0f;
       obj_note.y = cardRec.y + 40;
+      particle_system_init();
     }
   }
-
+  particle_system_update();
   if (animations_enabled) {
     switch (current_object_index) {
     case 0:
@@ -122,7 +127,18 @@ void objects_screen_update(Screen *currentScreen) {
         slider_elapsed = 0.0f;
       }
       break;
+    case 3: // note particle
+      particle_timer += GetFrameTime();
+      if (particle_timer > 0.15f) { // spawn a new batch every 0.15s
+        particle_timer = 0.0f;
+        float spawnX = cardRec.x + cardRec.width / 2.0f;
+        float spawnY = cardRec.y + cardRec.height / 2.0f;
+        particle_spawn(spawnX, spawnY, SKYBLUE);
+        particle_spawn(spawnX, spawnY, YELLOW);
+      }
+      break;
     }
+  } else {
   }
 }
 
@@ -132,9 +148,10 @@ void objects_screen_draw(void) {
 
   ClearBackground(COLOR_BASE);
 
-  const char *hints = "[Backspace]: Back  |  [Esc]: Exit  |  [O]: Outline  |  "
-                      "[<-]/[->]: Switch  |  "
-                      "[Space]: Toggle Anim";
+  const char *hints =
+      "[Backspace] : Back  |  [Esc] : Exit  |  [O] : Outline  |  "
+      "[<-]/[->] : Switch  |  "
+      "[Space] : Toggle Anim";
   int fontSize = 20;
   int padY = 12;
 
@@ -174,6 +191,14 @@ void objects_screen_draw(void) {
                              cardRec.width - 160, 10};
     midi_slider_draw(slider_rect, slider_elapsed, slider_total);
   } break;
+  case 3:
+    if (animations_enabled) {
+      particle_system_draw();
+    } else {
+      particle_draw_static(cardRec.x + cardRec.width / 2.0f,
+                           cardRec.y + cardRec.height / 2.0f, SKYBLUE);
+    }
+    break;
   }
 }
 

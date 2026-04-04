@@ -8,6 +8,7 @@ typedef struct {
   float frequency;
   float phase;
   float volume;
+  float decay_time;
   bool active;
   bool releasing;
 } Voice;

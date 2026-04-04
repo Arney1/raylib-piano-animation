@@ -43,8 +43,9 @@ void piano_draw(Piano *p) {
       Rectangle r = p->white_keys[i];
 
       if (p->white_active[i]) {
-        DrawRectangleGradientV(r.x, r.y, r.width, r.height, WHITE,
-                               (Color){255, 223, 184, 255});
+        DrawRectangleGradientV(r.x, r.y, r.width, r.height,
+                               (Color){255, 245, 230, 255},
+                               (Color){255, 150, 80, 255});
       } else {
         DrawRectangle(r.x, r.y, r.width, r.height, WHITE);
       }
@@ -56,13 +57,15 @@ void piano_draw(Piano *p) {
       Rectangle r = p->black_keys[i];
 
       if (p->black_active[i]) {
-        DrawRectGradientSmart(r.x, r.y, r.width, r.height, BLACK,
-                              (Color){128, 128, 128, 255});
+        DrawRectGradientSmart(r.x, r.y, r.width, r.height,
+                              (Color){20, 20, 30, 255},
+                              (Color){80, 80, 220, 255});
       } else {
         DrawRectangle(r.x, r.y, r.width, r.height, BLACK);
       }
     }
   } else {
+    // lazy comment: draw the base white piano structure
     int x_start = p->white_keys[0].x;
     int y_start = p->white_keys[0].y;
 
@@ -75,14 +78,13 @@ void piano_draw(Piano *p) {
     BresenhamLine(x_start, y_start, x_start, y_end, WHITE);
     BresenhamLine(x_end, y_start, x_end, y_end, WHITE);
 
+    // lazy comment: draw the cuts between white keys
     for (int i = 1; i < p->white_count; i++) {
       int x = p->white_keys[i].x;
-
       int y_cut = y_start;
 
       for (int j = 0; j < p->black_count; j++) {
         Rectangle bk = p->black_keys[j];
-
         if (x > bk.x && x < (bk.x + bk.width)) {
           y_cut = bk.y + bk.height;
           break;
@@ -92,15 +94,32 @@ void piano_draw(Piano *p) {
       BresenhamLine(x, y_cut, x, y_end, WHITE);
     }
 
+    // lazy comment: highlight active white keys with a yellow outline so it
+    // pops
+    for (int i = 0; i < p->white_count; i++) {
+      if (p->white_active[i]) {
+        Rectangle r = p->white_keys[i];
+
+        BresenhamLine(r.x, r.y, r.x + r.width, r.y, YELLOW);  // top
+        BresenhamLine(r.x, r.y, r.x, r.y + r.height, YELLOW); // left
+        BresenhamLine(r.x + r.width, r.y, r.x + r.width, r.y + r.height,
+                      YELLOW); // right
+        BresenhamLine(r.x, r.y + r.height, r.x + r.width, r.y + r.height,
+                      YELLOW); // bottom
+      }
+    }
+
+    // lazy comment: draw black keys, and color them skyblue if they are active
     for (int i = 0; i < p->black_count; i++) {
       Rectangle r = p->black_keys[i];
+      Color c = p->black_active[i] ? SKYBLUE : WHITE;
 
-      BresenhamLine(r.x, r.y, r.x + r.width, r.y, WHITE);  // top
-      BresenhamLine(r.x, r.y, r.x, r.y + r.height, WHITE); // left
+      BresenhamLine(r.x, r.y, r.x + r.width, r.y, c);  // top
+      BresenhamLine(r.x, r.y, r.x, r.y + r.height, c); // left
       BresenhamLine(r.x + r.width, r.y, r.x + r.width, r.y + r.height,
-                    WHITE); // right
+                    c); // right
       BresenhamLine(r.x, r.y + r.height, r.x + r.width, r.y + r.height,
-                    WHITE); // bottom
+                    c); // bottom
     }
   }
 }

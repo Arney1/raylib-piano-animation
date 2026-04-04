@@ -4,6 +4,7 @@
 #include "../objects/midi.h"
 #include "../objects/midi_slider.h"
 #include "../objects/note_block.h"
+#include "../objects/note_particle.h"
 #include "../objects/piano.h"
 #include "../render/render_state.h"
 #include "../utils/color_palette.h"
@@ -89,6 +90,7 @@ void anim_screen_init(void) {
   for (int i = 0; i < MAX_NOTES; i++) {
     notes[i].active = false;
   }
+  particle_system_init();
 }
 
 void anim_screen_update(Screen *currentScreen) {
@@ -105,10 +107,12 @@ void anim_screen_update(Screen *currentScreen) {
     return;
   }
 
-  // 2. Lower the slider track so it doesn't overlap the back button
+  particle_system_update();
+
   Rectangle slider_track = {50, 70, SCREEN_W - 100, 10};
   bool user_is_seeking =
       midi_slider_update(slider_track, &elapsed_music_time, total_music_time);
+
   if (user_is_seeking) {
     midi_seek(elapsed_music_time);
 
@@ -128,7 +132,9 @@ void anim_screen_update(Screen *currentScreen) {
   } else {
     elapsed_music_time += GetFrameTime();
   }
+
   midi_update(elapsed_music_time);
+
   if (IsKeyPressed(KEY_O)) {
     gRenderMode =
         (gRenderMode == RENDER_FILLED) ? RENDER_OUTLINE : RENDER_FILLED;
@@ -147,6 +153,7 @@ void anim_screen_update(Screen *currentScreen) {
 
     float bottom = n->y;
 
+    // delete notes
     if (n->triggered && bottom >= piano_y) {
       if (n->is_black)
         piano_set_black(&piano, n->key_index, false);
@@ -175,6 +182,12 @@ void anim_screen_update(Screen *currentScreen) {
 
       audio_play_note(n->key_index, n->is_black);
       n->triggered = true;
+
+      Color floatingNoteCol =
+          n->is_black ? (Color){0, 255, 255, 255} : (Color){255, 255, 0, 255};
+
+      // floating musical note particle spawn
+      particle_spawn(n->x + (n->width / 2.0f), piano_y, floatingNoteCol);
     }
   }
 }
@@ -187,6 +200,7 @@ void anim_screen_draw(void) {
     note_draw(&notes[i]);
   }
   piano_draw(&piano);
+  particle_system_draw();
   Rectangle slider_track = {50, 70, SCREEN_W - 100, 10};
   midi_slider_draw(slider_track, elapsed_music_time, total_music_time);
 

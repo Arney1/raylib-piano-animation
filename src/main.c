@@ -15,13 +15,12 @@ int main(void) {
 
   App_Init();
 
-  while (!WindowShouldClose()) {
+  while (!WindowShouldClose() && !App_ShouldClose()) {
     App_Update();
     audio_update();
+
     BeginDrawing();
-
     App_Draw();
-
     EndDrawing();
   }
 

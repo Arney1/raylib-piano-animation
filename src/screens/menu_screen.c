@@ -1,6 +1,7 @@
 #include "../objects/piano.h"
 #include "../utils/color_palette.h"
 #include "../utils/draw_utils.h"
+#include "about_screen.h"
 #include "anim_screen.h"
 #include "menu_screen.h"
 #include "objects_screen.h"
@@ -8,8 +9,8 @@
 
 static int selectedIndex = 0;
 static const int numOptions = 4;
-static const char *menuOptions[] = {"Anim Screen", "About Screen",
-                                    "Objects Screen", "How To Screen"};
+static const char *menuOptions[] = {"Play Animation", "Objects", "About",
+                                    "Exit"};
 static Piano menuPiano;
 static bool is_menu_active = false;
 
@@ -34,17 +35,20 @@ void menu_screen_update(Screen *currentScreen) {
       *currentScreen = SCREEN_ANIM;
       anim_screen_init();
       break;
-    // case 1:
-    //   *currentScreen = SCREEN_ABOUT;
-    //   break;
     case 2:
+      menu_screen_unload();
+      *currentScreen = SCREEN_ABOUT;
+      about_screen_init();
+      break;
+    case 1:
       menu_screen_unload();
       *currentScreen = SCREEN_OBJECTS;
       objects_screen_init();
       break;
-      // case 3:
-      //   *currentScreen = SCREEN_HOWTO;
-      //   break;
+    case 3:
+      menu_screen_unload();
+      *currentScreen = SCREEN_EXIT;
+      break;
     }
   }
 }
@@ -64,8 +68,15 @@ void menu_screen_draw(void) {
   for (int i = 0; i < numOptions; i++) {
     bool isSelected = (i == selectedIndex);
 
-    Color bgColor = isSelected ? COLOR_PRIMARY : COLOR_SURFACE;
-    Color textColor = isSelected ? COLOR_BASE : COLOR_TEXT;
+    Color bgColor, textColor;
+
+    if (i == 3) {
+      bgColor = isSelected ? RED : COLOR_SURFACE;
+      textColor = isSelected ? WHITE : (Color){255, 100, 100, 255};
+    } else {
+      bgColor = isSelected ? COLOR_PRIMARY : COLOR_SURFACE;
+      textColor = isSelected ? COLOR_BASE : COLOR_TEXT;
+    }
 
     Rectangle itemRec = {50, startY + (i * 50), 300, 40};
     DrawSquircleSmart(itemRec, bgColor, 0.4f);

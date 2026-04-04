@@ -5,15 +5,17 @@ LIBS   = $(shell pkg-config --libs raylib) -lm -ldl -lpthread
 TARGET = build/app
 
 SRCS = src/main.c \
-       src/graphics/dda.c \
        src/graphics/bresenham.c \
        src/graphics/midcircle.c \
+       src/graphics/bresellipse.c \
        src/screens/anim_screen.c \
        src/screens/menu_screen.c \
        src/screens/objects_screen.c \
+       src/screens/about_screen.c \
        src/objects/piano.c \
        src/objects/note_block.c \
        src/objects/midi.c \
+       src/objects/note_particle.c \
        src/objects/midi_slider.c \
        src/render/render_state.c \
        src/utils/draw_utils.c \
