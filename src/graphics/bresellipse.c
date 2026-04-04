@@ -18,10 +18,10 @@
  */
 
 static void DrawEllipsePoints(int cx, int cy, int x, int y, Color color) {
-  DrawPixel(cx + x, cy + y, color); // Kuadran I
-  DrawPixel(cx - x, cy + y, color); // Kuadran II
-  DrawPixel(cx + x, cy - y, color); // Kuadran IV
-  DrawPixel(cx - x, cy - y, color); // Kuadran III
+  DrawPixel(cx + x, cy + y, color); // kuadran 1
+  DrawPixel(cx - x, cy + y, color); // kuadran 2
+  DrawPixel(cx + x, cy - y, color); // and so on
+  DrawPixel(cx - x, cy - y, color);
 }
 
 void BresenhamEllipse(int cx, int cy, int rx, int ry, Color color) {

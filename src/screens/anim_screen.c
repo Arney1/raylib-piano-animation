@@ -29,7 +29,7 @@ void get_key_from_pitch(int pitch, int *key_index, bool *is_black) {
   int octave = pitch / 12;
   int note = pitch % 12; // 0=C, 1=C#, 2=D, 3=D#, 4=E, etc.
 
-  // map the 12 semi-tones to their respective index offsets in the arrays
+  // map the 12 semi-tones to the respective index offsets in the arrays
   int white_offsets[] = {0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6};
   int black_offsets[] = {-1, 0, -1, 1, -1, -1, 2, -1, 3, -1, 4, -1};
 

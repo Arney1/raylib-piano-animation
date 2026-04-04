@@ -39,7 +39,7 @@ void about_screen_draw(void) {
   DrawText(hints, (int)textX, (int)(hintBg.y + padY), hintFontSize, COLOR_TEXT);
 
   int cardW = 640;
-  int cardH = 420;
+  int cardH = 450;
   int cardX = (SCREEN_W / 2) - (cardW / 2);
   int cardY = (SCREEN_H / 2) - (cardH / 2) + 20;
 
@@ -74,29 +74,25 @@ void about_screen_draw(void) {
   DrawText("Library : Raylib 5.5", cardX + 40, infoY + 50, 16,
            COLOR_TEXT_MUTED);
 
-  int sumY = infoY + 90;
-  int sumW = 130;
-  int sumH = 50;
-  int sumGap = 10;
-  int sumStartX = SCREEN_W / 2 - (4 * sumW + 3 * sumGap) / 2;
+  int descY = infoY + 90;
+  Rectangle descRec = {cardX + 40, descY, cardW - 80, 80};
+  Color descBg = COLOR_BASE;
+  DrawSquircleSmart(descRec, descBg, 0.1f);
 
-  const char *pLabels[] = {"MIDI Parser", "Piano UI", "Anim Loop",
-                           "Squircle UI"};
-  Color pColors[] = {SKYBLUE, VIOLET, GREEN, ORANGE};
+  const char *line1 = "A MIDI visualizer built in C using Raylib.";
+  const char *line2 = "Loads a MIDI CSV, falls notes onto a live piano,";
+  const char *line3 = "and plays back audio in real-time with full seek.";
 
-  for (int i = 0; i < 4; i++) {
-    int bx = sumStartX + i * (sumW + sumGap);
-    Rectangle badgeRec = {bx, sumY, sumW, sumH};
+  int l1w = MeasureText(line1, 16);
+  int l2w = MeasureText(line2, 16);
+  int l3w = MeasureText(line3, 16);
 
-    Color badgeBg = pColors[i];
-    badgeBg.a = 70;
-
-    DrawSquircleSmart(badgeRec, badgeBg, 0.3f);
-
-    int labelWidth = MeasureText(pLabels[i], 16);
-    DrawText(pLabels[i], bx + (sumW / 2) - (labelWidth / 2), sumY + 17, 16,
-             pColors[i]);
-  }
+  DrawText(line1, cardX + 40 + (cardW - 80) / 2 - l1w / 2, descY + 14, 16,
+           COLOR_TEXT);
+  DrawText(line2, cardX + 40 + (cardW - 80) / 2 - l2w / 2, descY + 36, 16,
+           COLOR_TEXT_MUTED);
+  DrawText(line3, cardX + 40 + (cardW - 80) / 2 - l3w / 2, descY + 56, 16,
+           COLOR_TEXT_MUTED);
 }
 
 void about_screen_unload(void) { is_about_active = false; }

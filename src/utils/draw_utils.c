@@ -8,7 +8,6 @@ void DrawRectSmart(float x, float y, float w, float h, Color color) {
     DrawRectangle(x, y, w, h, color);
   } else {
     BresenhamRectangle(x, y, x + w, y + h, color);
-    // DrawRectangleLines(x, y, w, h, color);
   }
 }
 
@@ -22,9 +21,6 @@ void DrawRectGradientSmart(float x, float y, float w, float h, Color c1,
     c.g = (c1.g + c2.g) / 2;
     c.b = (c1.b + c2.b) / 2;
     c.a = (c1.a + c2.a) / 2;
-    // for (int i = 0; i < 4; i++) {
-    //   c[i] = (c1[i] + c2[i]) / 2;
-    // }
     BresenhamRectangle(x, y, x + w, y + h, c);
   }
 }
@@ -94,10 +90,10 @@ void DrawSquircleSmart(Rectangle r, Color color, float rad_percent) {
     int cy1 = y1 - rint;
 
     // 4 quarter circles
-    MidcircleQuarter(cx1, cy0, rint, 0, color); // top-right
-    MidcircleQuarter(cx0, cy0, rint, 1, color); // top-left
-    MidcircleQuarter(cx0, cy1, rint, 2, color); // bottom-left
-    MidcircleQuarter(cx1, cy1, rint, 3, color); // bottom-right
+    MidcircleQuarter(cx1, cy0, rint, 0, color); // top right
+    MidcircleQuarter(cx0, cy0, rint, 1, color); // top left
+    MidcircleQuarter(cx0, cy1, rint, 2, color); // bottom left
+    MidcircleQuarter(cx1, cy1, rint, 3, color); // bottom right
 
     // 4 straight edges
     BresenhamLine(cx0, y0, cx1, y0, color);
@@ -160,7 +156,6 @@ void DrawSquircleGradientSmart(Rectangle r, float rad_percent, Color c1,
 
     DrawRectangleGradientV(x, y, w, h, c1, c2);
   } else {
-    // Average color for outline
     Color c;
     c.r = (c1.r + c2.r) / 2;
     c.g = (c1.g + c2.g) / 2;
@@ -181,10 +176,8 @@ void DrawCircleSmart(float cx, float cy, float radius, Color color) {
 void DrawCircleGradientSmart(float cx, float cy, float radius, Color c1,
                              Color c2) {
   if (gRenderMode == RENDER_FILLED) {
-    // Note: Raylib only supports radial gradients natively for circles
     DrawCircleGradient((int)cx, (int)cy, radius, c1, c2);
   } else {
-    // Average color for outline
     Color c;
     c.r = (c1.r + c2.r) / 2;
     c.g = (c1.g + c2.g) / 2;

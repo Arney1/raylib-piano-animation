@@ -8,7 +8,7 @@
 #define MAX_VOICES 32
 #define MASTER_VOLUME 1.0f
 #define VOICE_MIX_LEVEL 0.25f
-#define DECAY_K 0.00008f // tune this: larger = faster decay
+#define DECAY_K 0.00008f
 
 static Voice voices[MAX_VOICES] = {0};
 static AudioStream stream;

@@ -19,7 +19,7 @@ float midi_get_length(void) {
 // fast forward or goes back
 void midi_seek(float target_time) {
   current_index = 0;
-  // fast forward until we find the first note that plays after the target time
+  // fast forward until it find the first note that plays after the target time
   while (current_index < note_count &&
          notes[current_index].start < target_time) {
     current_index++;

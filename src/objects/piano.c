@@ -65,7 +65,7 @@ void piano_draw(Piano *p) {
       }
     }
   } else {
-    // lazy comment: draw the base white piano structure
+    // base white piano structure
     int x_start = p->white_keys[0].x;
     int y_start = p->white_keys[0].y;
 
@@ -78,7 +78,7 @@ void piano_draw(Piano *p) {
     BresenhamLine(x_start, y_start, x_start, y_end, WHITE);
     BresenhamLine(x_end, y_start, x_end, y_end, WHITE);
 
-    // lazy comment: draw the cuts between white keys
+    // cuts between white keys
     for (int i = 1; i < p->white_count; i++) {
       int x = p->white_keys[i].x;
       int y_cut = y_start;
@@ -94,22 +94,19 @@ void piano_draw(Piano *p) {
       BresenhamLine(x, y_cut, x, y_end, WHITE);
     }
 
-    // lazy comment: highlight active white keys with a yellow outline so it
-    // pops
     for (int i = 0; i < p->white_count; i++) {
       if (p->white_active[i]) {
         Rectangle r = p->white_keys[i];
 
-        BresenhamLine(r.x, r.y, r.x + r.width, r.y, YELLOW);  // top
-        BresenhamLine(r.x, r.y, r.x, r.y + r.height, YELLOW); // left
+        BresenhamLine(r.x, r.y, r.x + r.width, r.y, YELLOW);
+        BresenhamLine(r.x, r.y, r.x, r.y + r.height, YELLOW);
         BresenhamLine(r.x + r.width, r.y, r.x + r.width, r.y + r.height,
-                      YELLOW); // right
+                      YELLOW);
         BresenhamLine(r.x, r.y + r.height, r.x + r.width, r.y + r.height,
-                      YELLOW); // bottom
+                      YELLOW);
       }
     }
 
-    // lazy comment: draw black keys, and color them skyblue if they are active
     for (int i = 0; i < p->black_count; i++) {
       Rectangle r = p->black_keys[i];
       Color c = p->black_active[i] ? SKYBLUE : WHITE;
