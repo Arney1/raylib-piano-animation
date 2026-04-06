@@ -16,6 +16,7 @@ typedef struct {
     bool black_active[MAX_BLACK_KEYS];
     int white_count;
     int black_count;
+    bool show_musical_scale;
 } Piano;
 
 void piano_init(Piano *p, Vector2 start, Vector2 end);
@@ -23,5 +24,6 @@ void piano_draw(Piano *p);
 void piano_set_white(Piano *p, int i, bool state);
 void piano_set_black(Piano *p, int i, bool state);
 void piano_clear(Piano *p);
+void piano_toggle_musical_scale(Piano *p);
 
 #endif

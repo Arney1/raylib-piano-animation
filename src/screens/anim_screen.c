@@ -14,6 +14,7 @@
 #include "menu_screen.h"
 #include "raylib.h"
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define MAX_NOTES 1024
@@ -100,6 +101,10 @@ void anim_screen_init(void) {
 }
 
 void anim_screen_update(Screen *currentScreen) {
+
+  if (IsKeyPressed(KEY_S)) {
+    piano_toggle_musical_scale(&piano);
+  }
   if (IsKeyPressed(KEY_BACKSPACE)) {
     for (int i = 0; i < MAX_NOTES; i++) {
       if (notes[i].active && notes[i].triggered) {
@@ -213,7 +218,7 @@ void anim_screen_draw(void) {
   midi_slider_draw(slider_track, elapsed_music_time, total_music_time);
 
   const char *hints = "[Backspace] : Back  |  [Esc] : Exit  |  [O] : Outline  "
-                      "|  [<-] / [->] : Seek";
+                      "|  [<-] / [->] : Seek  |  [S] : See musical notes";
   int fontSize = 20;
   int textWidth = MeasureText(hints, fontSize);
   int padY = 12;
