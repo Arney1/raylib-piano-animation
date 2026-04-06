@@ -23,7 +23,7 @@ void particle_spawn(float x, float y, Color color) {
       particles[i].y = y;
       particles[i].lifetime = 0.0f;
       // base lifetime 1.5s with a small random offset of +-0.2s
-      particles[i].maxLife = 1.5f + (GetRandomValue(-2, 2) * 0.1f);
+      particles[i].maxLife = 5.00f + (GetRandomValue(-2, 2) * 0.1f);
       particles[i].scale = 0.0f;
       particles[i].color = color;
       // random phase offset in [0, pi] so particles dont all sway in sync
@@ -53,7 +53,7 @@ void particle_system_update(void) {
     // scale follows sin(ratio * pi) so it smoothly rises then falls back to 0
     p->scale = sinf(lifeRatio * PI);
 
-    float floatSpeed = 100.0f;
+    float floatSpeed = 690.0f;
     float waveFreq = 5.0f;
     float waveAmp = 20.0f;
     // linear upward drift, 100px total over the full lifetime
